@@ -73,5 +73,28 @@ describe('connection manager', function () {
         expect(spy.firstCall.args[1]).to.eql({});
       }.bind(this));
     });
+
+    it('should call beforeDisconnect', function() {
+      var spy = sinon.spy();
+      this.sequelize.beforeDisconnect(spy);
+
+      var connectionManager = new ConnectionManager(this.dialect, this.sequelize);
+
+      return connectionManager.$disconnect({}).then(function() {
+        expect(spy.callCount).to.equal(1);
+        expect(spy.firstCall.args[0]).to.equal(this.connection);
+      }.bind(this));
+    });
+
+    it('should call afterDisconnect', function() {
+      var spy = sinon.spy();
+      this.sequelize.afterDisconnect(spy);
+
+      var connectionManager = new ConnectionManager(this.dialect, this.sequelize);
+
+      return connectionManager.$disconnect({}).then(function() {
+        expect(spy.callCount).to.equal(0);
+      }.bind(this));
+    });
   });
 });
